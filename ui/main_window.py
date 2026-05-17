@@ -19,6 +19,7 @@ from ui.panels import (
     PriceInputPanel,
     ExchangeRatePanel,
     ContractsPanel,
+    LeveragePanel,
     KospiResultPanel,
     EWYResultPanel,
     EquivalentPositionPanel,
@@ -53,6 +54,7 @@ class MainWindow(QMainWindow):
         self.kospi_price = K200Const.DEFAULT_PRICE
         self.ewy_price = EWYConst.DEFAULT_PRICE
         self.contracts = EWYConst.DEFAULT_CONTRACTS
+        self.ewy_leverage = EWYConst.DEFAULT_LEVERAGE
 
         self._setup_ui()
         self._connect_signals()
@@ -86,6 +88,9 @@ class MainWindow(QMainWindow):
         self.contracts_panel = ContractsPanel()
         main_layout.addWidget(self.contracts_panel)
 
+        self.leverage_panel = LeveragePanel()
+        main_layout.addWidget(self.leverage_panel)
+
         self.kospi_result_panel = KospiResultPanel()
         main_layout.addWidget(self.kospi_result_panel)
 
@@ -106,6 +111,7 @@ class MainWindow(QMainWindow):
         self.exchange_rate_panel.refresh_requested.connect(self._on_refresh_rate)
 
         self.contracts_panel.contracts_changed.connect(self._on_contracts_changed)
+        self.leverage_panel.leverage_changed.connect(self._on_leverage_changed)
 
         self.fetch_completed.connect(self._update_ui_from_fetch)
         self.rate_completed.connect(self._update_rate_from_fetch)
@@ -120,6 +126,10 @@ class MainWindow(QMainWindow):
 
     def _on_contracts_changed(self, value: int) -> None:
         self.contracts = value
+        self._update_display()
+
+    def _on_leverage_changed(self, value: int) -> None:
+        self.ewy_leverage = value
         self._update_display()
 
     def _on_refresh_rate(self) -> None:
@@ -149,7 +159,7 @@ class MainWindow(QMainWindow):
         """시세 수동 갱신.
 
         현재 기준:
-        - 최근 실제 거래 가능일의 KST 09:00 15분봉 시가
+        - 최근 실제 거래 가능일의 KST 08:45 15분봉 시가
         - MT5 KS200과 Binance EWYUSDT를 같은 UTC open time으로 조회
         - 두 UTC 시간이 같을 때만 성공 처리
         """
@@ -158,8 +168,8 @@ class MainWindow(QMainWindow):
         def fetch():
             try:
                 # 기준 시각 설정
-                # 09:00 KST를 사용
-                # 08:45 KST를 원하면 hour=8, minute=45로 변경
+                # 현재는 KST 08:45 기준
+                # KST 09:00을 원하면 hour=9, minute=0으로 변경
                 result = fetch_synced_prices_at_kst(hour=8, minute=45)
 
                 if result is None:
@@ -174,11 +184,11 @@ class MainWindow(QMainWindow):
 
                 time_str = (
                     f"✅ 동기화 완료\n"
-                    f"기준: {result.common_time_kst.strftime('%Y-%m-%d %H:%M')} KST 15분봉 시가\n"
+                    f"기준: {result.common_time_kst.strftime('%Y-%m-%d %H:%M')} "
+                    f"KST 15분봉 시가\n"
                     f"UTC {result.common_time_utc.strftime('%Y-%m-%d %H:%M')} | "
                     f"브로커 {result.common_time_broker.strftime('%H:%M')} GMT+3"
                 )
-
 
                 self.fetch_completed.emit(
                     result.kospi_price,
@@ -245,6 +255,7 @@ class MainWindow(QMainWindow):
             price_usd=self.ewy_price,
             contracts=self.contracts,
             exchange_rate=self.exchange_rate,
+            leverage=self.ewy_leverage,
         )
 
         # 미니코스피200

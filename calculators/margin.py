@@ -24,13 +24,16 @@ class MarginCalculator:
             "contract_value_usd": ewy.contract_value_usd,
             "contract_value_krw": ewy.contract_value_krw,
             "required_margin": ewy.required_margin,
-            "contracts": ewy.contracts,  # ✅ 누락된 키 추가
-            "leverage": 1.0,
+            "required_margin_10x": ewy.required_margin_10x,
+            "required_margin_20x": ewy.required_margin_20x,
+            "contracts": ewy.contracts,
+            "leverage": float(ewy.safe_leverage),
         }
 
     @staticmethod
     def compare_margins(
-        kospi: Kospi200Model, ewy: EWYModel
+        kospi: Kospi200Model,
+        ewy: EWYModel,
     ) -> dict[str, dict[str, float]]:
         """두 계약의 증거금 비교."""
         kospi_margins = MarginCalculator.calculate_kospi200(kospi)

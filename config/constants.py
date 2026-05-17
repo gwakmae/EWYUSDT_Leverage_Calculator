@@ -24,6 +24,11 @@ class EWY:
     MAX_CONTRACTS: int = 500
     DEFAULT_CONTRACTS: int = 1
 
+    # 레버리지
+    MIN_LEVERAGE: int = 1
+    MAX_LEVERAGE: int = 20
+    DEFAULT_LEVERAGE: int = 10
+
     DEFAULT_PRICE: float = 189.87
 
 
@@ -32,6 +37,7 @@ class ExchangeRate:
 
     API_URL: str = "http://www.smbs.biz/ExRate/StdExRate.jsp"
     DEFAULT_RATE: float = 1498.0
+
     MIN_LEVERAGE: float = 1.0
     MAX_LEVERAGE: float = 20.0
     DEFAULT_LEVERAGE: float = 1.0
