@@ -1,0 +1,39 @@
+# 운영체제 파일
+.DS_Store
+Thumbs.db
+# IDE/에디터 설정 파일
+.idea/
+*.iml
+*.iws
+.vscode/
+*.sublime-project
+*.sublime-workspace
+# 언어/프레임워크 (Python)
+# 가상 환경 및 캐시
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyi
+# 사용자 지정 제외 항목
+config/.env
+# 빌드/의존성 및 컴파일 산출물
+# 패키징 및 빌드 결과물
+dist/
+build/
+*.egg-info/
+.eggs/
+# Qt/C++ 관련 임시 파일 및 라이브러리 (QML, SIP, QM 확장자 고려)
+*.sip
+*.qm
+*.dll
+*.lib
+*.qmltypes
+# 로그 및 임시 파일
+*.log
+tmp/
+temp/
+*.swp
